@@ -4,10 +4,9 @@ import { ArrowRight } from "phosphor-react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { useRouter } from "next/router";
 
-interface Props {
 
-}
 
 const claimUsernameFormSchema = z.object({
   username: z.string()
@@ -19,30 +18,35 @@ const claimUsernameFormSchema = z.object({
 
 type ClaimUsernameFormInputs = z.infer<typeof claimUsernameFormSchema>;
 
-export function ClaimUsernameForm({}: Props) {
-  const { register, handleSubmit, formState: { errors } } = useForm<ClaimUsernameFormInputs>({
+export function ClaimUsernameForm() {
+  const { register, handleSubmit, formState: { errors, isSubmitting } } = useForm<ClaimUsernameFormInputs>({
     resolver: zodResolver(claimUsernameFormSchema),
   });
 
+  const router = useRouter();
+
   async function handleClaimUsername(data: ClaimUsernameFormInputs) {
-    console.log(data);
+    const { username } = data;
+
+    await router.push(`/register?username=${username}`);
   }
 
-  return (<>
-    <Form as="form" onSubmit={handleSubmit(handleClaimUsername)}>
+  return (
+    <>
+      <Form as="form" onSubmit={handleSubmit(handleClaimUsername)}>
 
-      <TextInput size="sm" prefix="ignite.com/" placeholder="seu usuário" {...register('username')} />
-      <Button size="sm" type="submit">
-        Reservar usuário
-        <ArrowRight />
-      </Button>
-    </Form>
+        <TextInput size="sm" prefix="ignite.com/" placeholder="seu usuário" {...register('username')} />
+        <Button size="sm" type="submit" disabled={isSubmitting}>
+          Reservar usuário
+          <ArrowRight />
+        </Button>
+      </Form>
 
-    <FormAnnotation>
-      <Text size="sm" as="span">
-        {errors.username ? errors.username.message : 'Digite seu usuário'}
-      </Text>
-    </FormAnnotation>
-  </>
+      <FormAnnotation>
+        <Text size="sm" as="span">
+          {errors.username ? errors.username.message : 'Digite seu usuário'}
+        </Text>
+      </FormAnnotation>
+    </>
   );
 }
