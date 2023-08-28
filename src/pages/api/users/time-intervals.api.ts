@@ -1,6 +1,21 @@
 import { NextApiRequest, NextApiResponse } from "next";
 import { getServerSession } from "next-auth";
 import { buildNextAuthOptions } from "../auth/[...nextauth].api";
+import { z } from "zod";
+import { prisma } from "@/lib/prisma";
+
+const timeIntervalsBodySchema = z.object({
+  intervals: z.array(
+    z.object({
+      weekDay: z.number().min(0).max(6),
+      startTimeInMinutes: z.number(),
+      endTimeInMinutes: z.number(),
+    })
+  )
+    .refine(intervals => {
+      return intervals.every(interval => interval.endTimeInMinutes - 60 >= interval.startTimeInMinutes);
+    }, { message: 'O horário de término deve ser pelo menos 1 hora distante do início' })
+});
 
 export default async function handler(
   req: NextApiRequest,
@@ -12,7 +27,24 @@ export default async function handler(
 
   const session = await getServerSession(req, res, buildNextAuthOptions(req, res));
 
-  return res.json({
-    session
-  });
+  if (!session) {
+    return res.status(401).end();
+  }
+
+  const { intervals } = timeIntervalsBodySchema.parse(req.body);
+
+  await Promise.all(
+    intervals.map(async (interval) => {
+      return await prisma.userTimeInterval.create({
+        data: {
+          user_id: session.user.id,
+          week_day: interval.weekDay,
+          time_start_in_minutes: interval.startTimeInMinutes,
+          time_end_in_minutes: interval.endTimeInMinutes,
+        }
+      });
+    }));
+
+
+  return res.status(201).end();
 }

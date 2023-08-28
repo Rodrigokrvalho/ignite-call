@@ -65,7 +65,7 @@ export default function Register({}: Props) {
           Falha ao se conectar ao Google, verifique se você deu as permissões de acesso ao Google Calendar.
         </AuthError>}
 
-        <Button type="submit" disabled={!isSignedIn}>
+        <Button onClick={() => router.push('/register/time-intervals')} disabled={!isSignedIn}>
           Proximo passo
           <ArrowRight />
         </Button>
