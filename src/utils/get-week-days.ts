@@ -1,6 +1,16 @@
-export function getWeekDays() {
+interface GetWeekDaysParams {
+  isShort?: boolean;
+}
+
+export function getWeekDays(
+  {
+    isShort
+  }:
+    GetWeekDaysParams = {
+      isShort: false,
+    }) {
   const formatter = new Intl.DateTimeFormat('pt-BR', {
-    weekday: 'long'
+    weekday: isShort ? 'short' : 'long',
   });
 
   return Array.from(Array(7).keys())
