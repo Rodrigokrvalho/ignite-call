@@ -1,27 +1,26 @@
-import { Box, styled } from "@ignite-ui/react";
+import { Box, styled, Text } from '@ignite-ui/react';
 
 export const Container = styled(Box, {
   margin: '$6 auto 0',
   padding: 0,
   display: 'grid',
-  maxWidth: '100%',
   position: 'relative',
 
   variants: {
     isTimePickerOpen: {
       true: {
-        gridTemplateColumns: '1fr 280',
+        gridTemplateColumns: '1fr 280px',
 
         '@media(max-width: 900px)': {
           gridTemplateColumns: '1fr',
-        }
+        },
       },
       false: {
         width: 540,
         gridTemplateColumns: '1fr',
-      }
-    }
-  }
+      },
+    },
+  },
 });
 
 export const TimePicker = styled('div', {
@@ -33,31 +32,32 @@ export const TimePicker = styled('div', {
   top: 0,
   bottom: 0,
   right: 0,
-  width: 280
+  width: 280,
 });
 
-export const TimePickerHeader = styled('div', {
+export const TimePickerHeader = styled(Text, {
   fontWeight: '$medium',
+
   span: {
-    color: '$gray200'
-  }
+    color: '$gray200',
+  },
 });
 
 export const TimePickerList = styled('div', {
-  marginTop: '$6',
+  marginTop: '$3',
   display: 'grid',
   gridTemplateColumns: '1fr',
   gap: '$2',
 
-  '@media(max-width: 900px)': {
+  '@media (max-width: 900px)': {
     gridTemplateColumns: '2fr',
-  }
+  },
 });
 
 export const TimePickerItem = styled('button', {
   border: 0,
-  background: '$gray600',
-  padding: 0,
+  backgroundColor: '$gray600',
+  padding: '$2 0',
   cursor: 'pointer',
   color: '$gray100',
   borderRadius: '$sm',
@@ -65,7 +65,7 @@ export const TimePickerItem = styled('button', {
   lineHeight: '$base',
 
   '&:last-child': {
-    marginBottom: '$6'
+    marginBottom: '$6',
   },
 
   '&:disabled': {
@@ -80,7 +80,5 @@ export const TimePickerItem = styled('button', {
 
   '&:focus': {
     boxShadow: '0 0 0 2px $colors$gray100',
-  }
-
-
+  },
 });
