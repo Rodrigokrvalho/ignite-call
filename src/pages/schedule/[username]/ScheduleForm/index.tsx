@@ -1,14 +1,22 @@
-import { CalendarStep } from "./CalendarStep";
-import { ConfirmStep } from "./ConfirmStep";
+import { useState } from 'react';
+import { CalendarStep } from './CalendarStep';
+import { ConfirmStep } from './ConfirmStep';
 
-interface Props {
+export function ScheduleForm() {
+  const [selectedDateTime, setSelectedDateTime] = useState<Date | null>();
 
-}
+  function handleClearSelectedDateTime() {
+    setSelectedDateTime(null);
+  }
 
-export function ScheduleForm({}: Props) {
+  if (selectedDateTime) {
+    return (
+      <ConfirmStep
+      // schedulingDate={selectedDateTime}
+      // onCancelConfirmation={handleClearSelectedDateTime}
+      />
+    );
+  }
 
-  return (
-    <CalendarStep />
-    // <ConfirmStep />
-  );
+  return <CalendarStep onSelectDateTime={setSelectedDateTime} />;
 }
