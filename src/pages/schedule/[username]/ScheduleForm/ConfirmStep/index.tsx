@@ -4,6 +4,9 @@ import { CalendarBlank, Clock } from "phosphor-react";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
+import dayjs from "dayjs";
+import { api } from "@/lib/axios";
+import { useRouter } from 'next/router';
 
 const confirmFormSchema = z.object({
   name: z.string().min(3, "O nome precisa ter no mínimo 3 caracteres"),
@@ -13,7 +16,12 @@ const confirmFormSchema = z.object({
 
 type ConfirmFormData = z.infer<typeof confirmFormSchema>;
 
-export function ConfirmStep() {
+interface ConfirmStepProps {
+  schedulingDate: Date;
+  onCancelConfirmation: () => void;
+}
+
+export function ConfirmStep({ onCancelConfirmation, schedulingDate }: ConfirmStepProps) {
   const {
     register,
     handleSubmit,
@@ -22,22 +30,33 @@ export function ConfirmStep() {
     resolver: zodResolver(confirmFormSchema),
   });
 
-  function handleConfirmScheduling(data: ConfirmFormData) {
-    console.log(data);
+  const router = useRouter();
+  const username = String(router.query.username);
+
+  async function handleConfirmScheduling({ email, name, observations }: ConfirmFormData) {
+    await api.post(`/users/${username}/schedule`, {
+      name,
+      email,
+      observations,
+      date: schedulingDate
+    });
+
+    onCancelConfirmation();
   }
 
-
+  const dateWithTime = dayjs(schedulingDate).format('DD[ de ]MMMM[ de ]YYYY');
+  const describedTime = dayjs(schedulingDate).format('HH:mm[h]');
 
   return (
     <ConfirmForm as="form" onSubmit={handleSubmit(handleConfirmScheduling)}>
       <FormHeader>
         <Text>
           <CalendarBlank />
-          data
+          {dateWithTime}
         </Text>
         <Text>
           <Clock />
-          18:00
+          {describedTime}
         </Text>
 
         <label>
@@ -61,7 +80,7 @@ export function ConfirmStep() {
           <Button
             type="button"
             variant="tertiary"
-            onClick={() => {}}
+            onClick={onCancelConfirmation}
           >
             Cancelar
           </Button>
